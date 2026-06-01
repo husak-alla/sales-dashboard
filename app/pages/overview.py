@@ -182,7 +182,8 @@ def render_overview(df: pd.DataFrame, df_full: pd.DataFrame | None = None) -> No
 
         rev_by_year = rev_by_year.sort_values(
             ['year', 'sales_channel'],
-            ascending=[True, False]  # offline перед online (o-f-f < o-n-l алфавітно)
+            ascending=[True, False]
+        )
 
         fig1 = px.bar(
             rev_by_year,
@@ -192,6 +193,7 @@ def render_overview(df: pd.DataFrame, df_full: pd.DataFrame | None = None) -> No
             barmode='stack',
             labels={'revenue_M': 'Дохід (млн $)', 'year': 'Рік', 'sales_channel': 'Канал'},
         )
+
         fig1.update_traces(
             hovertemplate='<b>%{x}</b><br>%{fullData.name}: %{y:.1f} млн $<extra></extra>'
         )
