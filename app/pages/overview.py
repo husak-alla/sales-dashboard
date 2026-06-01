@@ -180,17 +180,13 @@ def render_overview(df: pd.DataFrame, df_full: pd.DataFrame | None = None) -> No
         total_by_year = df.groupby('year')['revenue'].sum().reset_index()
         total_by_year['revenue_M'] = total_by_year['revenue'] / 1e6
 
-        rev_by_year = rev_by_year.sort_values(
-            ['year', 'sales_channel'],
-            ascending=[True, False]
-        )
 
         fig1 = px.bar(
             rev_by_year,
             x='year', y='revenue_M',
             color='sales_channel',
             color_discrete_map={'online': COLOR_ONLINE, 'offline': COLOR_OFFLINE},
-            barmode='stack',
+            barmode='group',
             labels={'revenue_M': 'Дохід (млн $)', 'year': 'Рік', 'sales_channel': 'Канал'},
         )
 
