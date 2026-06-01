@@ -1,50 +1,120 @@
-# 📊 Sales Analytics Dashboard
+# Sales Analytics Dashboard
 
-Інтерактивний дашборд для аналізу продажів 2010–2017, побудований на Python + Streamlit.
+End-to-end аналітичний продукт: від сирих CSV до задеплоєного веб-застосунку.
 
-## 🚀 Демо
-> Посилання з'явиться після деплою на Streamlit Cloud
+**[▶ Live Demo](https://sales-dashboard-analytics.streamlit.app)** · Python · Streamlit · Pandas · Plotly · SQLite
 
-## 🛠️ Технічний стек
-- **Python 3.11** — основна мова
-- **Streamlit 1.35** — веб-інтерфейс
-- **Pandas 2.2** — обробка даних
-- **Plotly 5.22** — інтерактивні графіки
-- **SQLite** — база даних для агрегацій
+---
 
-## 📁 Структура проєкту
+## Overview
+
+Дашборд аналізує 1 330 транзакцій продажів за 2010–2017 роки по 45 країнах.
+Мета — не просто візуалізація даних, а actionable insights для бізнес-рішень.
+
+![Overview](screenshots/01_overview.webp)
+
+---
+
+## Архітектура
+
+Проєкт побудований за ETL + layered architecture патерном:
 
 sales-dashboard/
-├── main.py                 # точка входу, навігація
+├── main.py                    # entry point, routing
 ├── app/
-│   ├── components/         # UI компоненти
-│   ├── pages/              # 5 аналітичних сторінок
-│   └── services/           # дані, БД, метрики
-├── data/raw/               # оригінальні CSV файли
-├── notebooks/              # EDA notebook
-└── tests/                  # pytest тести
+│   ├── components/            # reusable UI (filters, header)
+│   ├── pages/                 # 5 analytical views
+│   └── services/
+│       ├── data_loader.py     # ETL pipeline: extract → transform → load
+│       ├── database.py        # SQLite layer
+│       └── metrics.py         # business metrics (pandas + SQL)
+├── data/
+│   ├── raw/                   # immutable source files
+│   └── processed/             # generated SQLite DB
+└── tests/                     # pytest unit + integration tests
 
+**Ключові архітектурні рішення:**
+- `@st.cache_data` — ETL pipeline виконується один раз при старті
+- Розподіл pandas (динамічні KPI) і SQL (статичні агрегації) за призначенням
+- `df.copy()` скрізь — захист від мутації оригінальних даних
+- Defensive programming — обробка edge cases на кожному рівні
 
-## 📊 Сторінки дашборду
-- **Overview** — KPI з YoY delta, тренди, динаміка по роках
-- **Product** — маржинальність категорій, Парето аналіз
-- **Geography** — choropleth карта, топ-10 країн, регіони
-- **Operations** — SLA пріоритетів, сезонність, логістика
-- **Data Dictionary** — опис полів, якість даних
+---
 
-## 🔍 Ключові інсайти
-- 88.5% доходу з Європи — критична географічна концентрація
-- Clothes маржа 67.2% vs Meat 13.6% — розкид 53.6 п.п.
-- Система пріоритетів замовлень не виконує SLA функцію
-- 7 з 12 категорій дають 80% прибутку (Парето)
+## Аналітичні сторінки
 
-## ⚙️ Запуск локально
+### Overview — executive summary
+![Overview](screenshots/01_overview.webp)
+
+KPI з YoY delta, автоматичний alert при спадній динаміці, 6-місячна ковзна середня.
+YoY метрики рахуються на повному датасеті — delta стабільна незалежно від фільтрів.
+
+![YoY](screenshots/02_overview_yoy.webp)
+
+---
+
+### Product — портфельний аналіз
+![Product](screenshots/03_product.webp)
+
+Зважена маржа `SUM(profit)/SUM(revenue)` замість `AVG(margin)` — методологічно коректна агрегація.
+
+![Pareto](screenshots/04_product_pareto.webp)
+
+Парето: 7 з 12 категорій (58%) генерують 80% прибутку.
+
+---
+
+### Geography — географічний розподіл
+![Geography](screenshots/05_geography_map.webp)
+
+88.5% доходу з Європи — критична концентрація. Choropleth карта + субрегіональна деталізація.
+82 записи без `country_code` показуються явно як data gap, не приховуються.
+
+---
+
+### Operations — операційна ефективність
+![Operations](screenshots/08_operations.webp)
+
+Автоматична SLA перевірка: Critical замовлення обробляються за 23.7 дн., Low — 25.1 дн.
+Різниця 1.4 дн. (~6%) — система пріоритетів фактично не працює.
+
+---
+
+### Інтерактивні фільтри
+
+| Всі роки · $1704.6M | 2015–2017 · $556.1M |
+|---|---|
+| ![Before](screenshots/11_filters_before.webp) | ![After](screenshots/12_filters_after.webp) |
+
+Фільтри по року, каналу, категорії та регіону. Стан зберігається в `session_state`.
+
+---
+
+## Data Quality
+
+| Метрика | Значення |
+|---|---|
+| Записів | 1 330 |
+| Пропусків після очищення | 0 |
+| Дублікатів | 0 |
+| Колонок у фінальному df | 22 (10 сирих + 12 похідних) |
+
+**Нетривіальні кейси очищення:**
+- Namibia ISO code `NA` → pandas читає як `NaN` → відновлено вручну через `.loc`
+- 82 записи без `country_code` → збережено як `unknown`, не видалено
+- `units_sold` пропуски → медіана (стійка до викидів на відміну від mean)
+
+---
+
+## Технічний стек
+
+Python 3.11    Streamlit 1.35    Pandas 2.2.2
+Plotly 5.22    SQLite            pytest
+
+## Запуск
+
 ```bash
 pip install -r requirements.txt
 streamlit run main.py
-```
-
-## 🧪 Тести
-```bash
 pytest tests/
 ```
