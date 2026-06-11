@@ -1,5 +1,4 @@
 import pandas as pd
-import pytest
 from app.services.data_loader import (
     clean_events,
     clean_products,
