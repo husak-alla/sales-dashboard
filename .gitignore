@@ -6,9 +6,8 @@ __pycache__/
 venv/
 *.egg-info/
 
-# Дані — не пушимо в GitHub
-data/processed/
-*.db
+# data/processed/
+# *.db
 
 # Jupyter
 .ipynb_checkpoints/
