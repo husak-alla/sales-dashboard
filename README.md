@@ -2,7 +2,7 @@
 
 End-to-end analytical product: from raw CSV files to a deployed web application.
 
-**[▶ Live Demo](https://sales-dashboard-analytics.streamlit.app)** &nbsp;|&nbsp; [![YouTube](https://img.shields.io/badge/YouTube-Demo-FF0000?logo=youtube&logoColor=white)](https://youtu.be/10_-DalFCvE) &nbsp;|&nbsp; Python &nbsp;|&nbsp; Streamlit &nbsp;|&nbsp; Pandas &nbsp;|&nbsp; Plotly &nbsp;|&nbsp; SQLite
+**[▶ Live Demo](https://sales-dashboard-analytics.streamlit.app)** &nbsp;|&nbsp; [![YouTube](https://img.shields.io/badge/YouTube-Demo-FF0000?logo=youtube&logoColor=white)](https://youtu.be/iUAMpkQIRRo) &nbsp;|&nbsp; Python &nbsp;|&nbsp; Streamlit &nbsp;|&nbsp; Pandas &nbsp;|&nbsp; Plotly &nbsp;|&nbsp; SQLite
 ---
 
 ## About
